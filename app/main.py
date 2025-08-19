@@ -1,5 +1,4 @@
 class Dictionary:
-
     def __init__(self, size: int = 8) -> None:
         self.size = size
         self.hash_table = [[] for _ in range(self.size)]
@@ -14,11 +13,9 @@ class Dictionary:
             if key == k:
                 self.hash_table[index][ind] = (key, value)
                 return
-        # додаємо новий ключ
         self.length += 1
         self.hash_table[index].append((key, value))
-        # перевірка load factor
-        self.loader_factory()
+        self._resize_if_needed()
 
     def __getitem__(self, key: object) -> object:
         index = self.hash(key)
@@ -30,17 +27,19 @@ class Dictionary:
     def __len__(self) -> int:
         return self.length
 
-    def loader_factory(self) -> None:
+    def _resize_if_needed(self) -> None:
+        """Check load factor and trigger rehash if necessary."""
         load_factor = self.length / self.size
         if load_factor > 0.7:
-            self.re_hashing()
+            self._rehash()
 
-    def re_hashing(self) -> None:
+    def _rehash(self) -> None:
+        """Double the table size and reinsert all key-value pairs."""
         old_table = self.hash_table
-        self.size *= 2  # збільшуємо розмір
+        self.size *= 2
         self.hash_table = [[] for _ in range(self.size)]
-        self.length = 0  # скидаємо лічильник і перерахуємо його правильно
+        self.length = 0
 
         for bucket in old_table:
             for k, v in bucket:
-                self.__setitem__(k, v)  # додаємо заново
+                self.__setitem__(k, v)
