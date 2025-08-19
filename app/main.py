@@ -14,9 +14,9 @@ class Dictionary:
             if key == k:
                 self.hash_table[index][ind] = (key, value)
                 return
-        self.loader_factory()
         self.length += 1
         self.hash_table[index].append((key, value))
+        self.loader_factory()
 
     def __getitem__(self, key: object) -> object:
         index = self.hash(key)
@@ -38,6 +38,9 @@ class Dictionary:
         new_table = [[] for _ in range(self.size)]
         old_table = self.hash_table
         self.hash_table = new_table
+        old_length = self.length
+        self.length = 0
         for bucket in old_table:
             for k, v in bucket:
                 self.__setitem__(k, v)
+        self.length = old_length
